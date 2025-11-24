@@ -12,16 +12,16 @@ import java.time.LocalDate;
 @RequestMapping("/jobs")
 public class JobController {
 
-    private final HighValueMonitorService hvService;
+    private final HighValueMonitorService highValueMonitorService;
 
-    public JobController(HighValueMonitorService hvService) {
-        this.hvService = hvService;
+    public JobController(HighValueMonitorService highValueMonitorService) {
+        this.highValueMonitorService = highValueMonitorService;
     }
 
     @PostMapping("/run-high-value-monitor")
     public String runHighValue(@RequestParam(required = false) String date) {
         LocalDate d = (date == null) ? LocalDate.now().minusDays(1) : LocalDate.parse(date);
-        hvService.runForDate(d);
+        highValueMonitorService.runForDate(d);
         return "Triggered high-value monitor for " + d;
     }
 

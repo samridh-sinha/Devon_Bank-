@@ -21,7 +21,7 @@ public class TransactionDao {
 
     public void streamTransactionsByDate(LocalDate date, int fetchSize, int batchSize, Consumer<List<Transaction>> batchConsumer) throws SQLException {
         String sql = "SELECT ID, ACCOUNT_ID, AMOUNT, TXN_TYPE, TXN_TIMESTAMP, CHANNEL, STATUS, DESCRIPTION " +
-                     "FROM \"TRANSACTION_DATA\" WHERE TRUNC(TXN_TIMESTAMP) = ? ORDER BY ID"; // table name may be uppercase in DDL
+                     "FROM \"TRANSACTION_DATA\" WHERE TRUNC(TXN_TIMESTAMP) = ? ORDER BY ID";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement statement = conn.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {

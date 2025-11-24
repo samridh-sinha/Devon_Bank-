@@ -49,7 +49,7 @@ public class HighValueMonitorService {
 
     @Scheduled(cron = "0 0 1 * * *")
     public void scheduledRun() {
-        logger.info("Scheduled high-value monitor triggered");
+        logger.info("Running high-value monitor service");
         runForDate(LocalDate.now().minusDays(1));
     }
 
