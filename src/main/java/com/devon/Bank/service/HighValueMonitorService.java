@@ -27,7 +27,7 @@ public class HighValueMonitorService {
     private final BigDecimal threshold;
     private final int batchSize;
     private final int fetchSize;
-    private final ProducerConsumerProcessor<Transaction> processor;
+    private final ProducerConsumerProcessor processor;
     private final Timer timer;
 
     public HighValueMonitorService(TransactionDao dao,
@@ -43,7 +43,7 @@ public class HighValueMonitorService {
         this.threshold = threshold;
         this.batchSize = batchSize;
         this.fetchSize = fetchSize;
-        this.processor = new ProducerConsumerProcessor<>(queueCapacity, consumerThreads, "hv");
+        this.processor = new ProducerConsumerProcessor(queueCapacity, consumerThreads, "hv");
         this.timer = registry.timer("highValue.monitor.time");
     }
 
@@ -55,10 +55,10 @@ public class HighValueMonitorService {
 
     public void runForDate(LocalDate date) {
         logger.info("Starting HighValueMonitor for date {}", date);
-        timer.record(() -> doRun(date));
+        timer.record(() -> triggerJob(date));
     }
 
-    private void doRun(LocalDate date) {
+    private void triggerJob(LocalDate date) {
         AtomicLong processed = new AtomicLong();
         AtomicLong highCount = new AtomicLong();
 

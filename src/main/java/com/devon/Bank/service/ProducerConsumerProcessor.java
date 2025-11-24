@@ -1,11 +1,13 @@
 package com.devon.Bank.service;
 
+import com.devon.Bank.model.Transaction;
+
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
-public class ProducerConsumerProcessor<T> {
-    private final BlockingQueue<List<T>> queue;
+public class ProducerConsumerProcessor {
+    private final BlockingQueue<List<Transaction>> queue;
     private final ExecutorService workers;
     private final int consumerCount;
 
@@ -15,12 +17,12 @@ public class ProducerConsumerProcessor<T> {
         this.workers = Executors.newFixedThreadPool(consumerCount, r -> new Thread(r, threadNamePrefix + "-worker"));
     }
 
-    public void startConsumers(Consumer<List<T>> batchProcessor) {
+    public void startConsumers(Consumer<List<Transaction>> batchProcessor) {
         for (int i = 0; i < consumerCount; i++) {
             workers.submit(() -> {
                 try {
                     while (true) {
-                        List<T> batch = queue.take();
+                        List<Transaction> batch = queue.take();
                         // poison pill: empty list
                         if (batch == null || batch.isEmpty()) break;
                         batchProcessor.accept(batch);
@@ -32,7 +34,7 @@ public class ProducerConsumerProcessor<T> {
         }
     }
 
-    public void produce(List<T> batch) throws InterruptedException {
+    public void produce(List<Transaction> batch) throws InterruptedException {
         queue.put(batch);
     }
 
