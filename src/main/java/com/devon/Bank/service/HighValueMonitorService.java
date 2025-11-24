@@ -27,23 +27,24 @@ public class HighValueMonitorService {
     private final BigDecimal threshold;
     private final int batchSize;
     private final int fetchSize;
-    private final ProducerConsumerProcessor processor;
     private final Timer timer;
+    @Value("${job.queueCapacity}")
+    private int queueCapacity;
+
+    @Value("${job.consumerThreads}")
+    private int consumerThreads;
 
     public HighValueMonitorService(TransactionDao dao,
                                    JdbcTemplate jdbc,
                                    @Value("${risk.highValueThreshold}") BigDecimal threshold,
                                    @Value("${job.batchSize}") int batchSize,
                                    @Value("${spring.jdbc.fetch-size}") int fetchSize,
-                                   @Value("${job.queueCapacity}") int queueCapacity,
-                                   @Value("${job.consumerThreads}") int consumerThreads,
                                    MeterRegistry registry) {
         this.dao = dao;
         this.jdbc = jdbc;
         this.threshold = threshold;
         this.batchSize = batchSize;
         this.fetchSize = fetchSize;
-        this.processor = new ProducerConsumerProcessor(queueCapacity, consumerThreads, "hv");
         this.timer = registry.timer("highValue.monitor.time");
     }
 
@@ -59,6 +60,10 @@ public class HighValueMonitorService {
     }
 
     private void triggerJob(LocalDate date) {
+
+        ProducerConsumerProcessor processor =
+                new ProducerConsumerProcessor(this.queueCapacity, consumerThreads, "hv");
+
         AtomicLong processed = new AtomicLong();
         AtomicLong highCount = new AtomicLong();
 

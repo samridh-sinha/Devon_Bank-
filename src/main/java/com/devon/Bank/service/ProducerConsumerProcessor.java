@@ -22,9 +22,10 @@ public class ProducerConsumerProcessor {
             workers.submit(() -> {
                 try {
                     while (true) {
+                        //Gives the first batch from the queue
                         List<Transaction> batch = queue.take();
                         // poison pill: empty list
-                        if (batch == null || batch.isEmpty()) break;
+                        if (batch.isEmpty()) break;
                         batchProcessor.accept(batch);
                     }
                 } catch (InterruptedException e) {
@@ -40,7 +41,9 @@ public class ProducerConsumerProcessor {
 
     public void stopAndAwait(long timeoutMinutes) throws InterruptedException {
         // send poison pills
-        for (int i = 0; i < consumerCount; i++) queue.put(List.of());
+        for (int i = 0; i < consumerCount; i++) {
+            queue.put(List.of());
+        }
         workers.shutdown();
         workers.awaitTermination(timeoutMinutes, TimeUnit.MINUTES);
     }
