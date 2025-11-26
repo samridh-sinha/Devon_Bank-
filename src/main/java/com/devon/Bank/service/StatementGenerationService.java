@@ -76,8 +76,6 @@ public class StatementGenerationService {
                     failed++;
                 }
             }
-
-            // Prepare for next batch
             lastId = batchIds.get(batchIds.size() - 1);
         }
 

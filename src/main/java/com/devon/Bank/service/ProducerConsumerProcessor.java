@@ -40,7 +40,6 @@ public class ProducerConsumerProcessor {
     }
 
     public void stopAndAwait(long timeoutMinutes) throws InterruptedException {
-        // send poison pills
         for (int i = 0; i < consumerCount; i++) {
             queue.put(List.of());
         }

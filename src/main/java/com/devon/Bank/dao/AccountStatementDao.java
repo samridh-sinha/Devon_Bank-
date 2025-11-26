@@ -21,9 +21,6 @@ public class AccountStatementDao {
         this.jdbc = jdbc;
     }
 
-    /**
-     * Fetch a batch of account IDs using keyset pagination.
-     */
     public List<Long> fetchAccountIdBatch(long lastId, int batchSize) {
 
         String sql = """
@@ -39,7 +36,6 @@ public class AccountStatementDao {
         return jdbc.queryForList(sql, Long.class, lastId, batchSize);
     }
 
-    // ---------------- Processing logic ----------------
 
     public AccountProcessingResult processAccount(Long accountId, int year, int month,
                                                   Date startDate, Date endDate) {
